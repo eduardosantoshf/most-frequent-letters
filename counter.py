@@ -10,13 +10,14 @@ class Counter(ABC):
             for word in file:
                 self.stopwords.add(word.strip())
 
-    def read_words(self):
+    def read_letters(self):
         with open(self.filename, 'r') as fp:
             for line in fp:
-                for word in line.split():
+                for words in line.split():
                     # remove all stop-words and punctuation marks
-                    for w in re.sub(r'[^a-zA-Z]', ' ', word).split():
-                        yield w.upper()
+                    for word in re.sub(r'[^a-zA-Z]', ' ', words).upper().split():
+                        for letter in word:
+                            yield letter
 
     @abstractmethod
     def count(self):
@@ -27,11 +28,11 @@ class ExactCounter(Counter):
         super().__init__(filename, stopwords)
     
     def count(self):
-        words = set()
+        letters = list()
 
-        for word in self.read_words(): words.add(word)
+        for letter in self.read_letters(): letters.append(letter)
             
-        return len(words)
+        return len(letters)
 
 def DecreasingProbabilityCounter(Counter):
     pass
