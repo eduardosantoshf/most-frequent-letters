@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from headers_enum import Headers
 import re
 
 class Counter(ABC):
@@ -11,11 +12,19 @@ class Counter(ABC):
                 self.stopwords.add(word.strip())
 
     def read_letters(self):
-        with open(self.filename, 'r') as fp:
-            for line in fp:
+        with open(self.filename, 'r') as file:
+            while True:
+                line = file.readline()
+
+                # ignore the Project Gutenberg file headers
+                if line.strip() in [header.value for header in Headers]: break
+                
+            while line:
+                line = file.readline()
+
                 for words in line.split():
                     # remove all stop-words and punctuation marks
-                    for word in re.sub(r'[^a-zA-Z]', ' ', words).upper().split():
+                    for word in re.sub(r'[^0-9a-zA-Z]', ' ', words).upper().split():
                         for letter in word:
                             yield letter
 
