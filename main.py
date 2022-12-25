@@ -53,4 +53,4 @@ if args['counter-type'] == 'exact':
             args['stopwords'].name
         )
 
-        print(counter.count())
+        print("Total letters count: ", counter.count())
