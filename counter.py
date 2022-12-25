@@ -1,11 +1,14 @@
 from abc import ABC, abstractmethod
-from headers_enum import Headers
+from collections import defaultdict
 import regex
+
+from headers_enum import Headers
 
 class Counter(ABC):
     def __init__(self, filename: str, stopwords: str):
         self.filename = filename
         self.stopwords = set()
+        self.letters = defaultdict(lambda: 0)
 
         with open(stopwords, 'r') as file:
             for word in file:
@@ -16,7 +19,7 @@ class Counter(ABC):
             while True:
                 line = file.readline()
 
-                # ignore the Project Gutenberg file headers
+                # ignore the Project Gutenberg's file headers
                 if line.strip() in [header.value for header in Headers]: break
                 
             while line:
@@ -28,6 +31,9 @@ class Counter(ABC):
                         for letter in word:
                             yield letter.upper()
 
+    def add_letter(self, letter):
+        self.letters[letter] += 1 
+
     @abstractmethod
     def count(self):
         pass
@@ -37,20 +43,13 @@ class ExactCounter(Counter):
         super().__init__(filename, stopwords)
     
     def count(self):
-        letters = dict()
 
-        for letter in self.read_letters():
-            if letter not in letters.keys():
-                letters[letter] = 1
-            else:
-                letters[letter] += 1 
+        for letter in self.read_letters(): self.add_letter(letter)
 
-
-        print("unique letters: ", len(letters))
-
-        print("letters:", letters)
+        print("unique letters: ", len(self.letters))
+        print("letters:", self.letters)
             
-        return sum(letters.values())
+        return sum(self.letters.values())
 
 def DecreasingProbabilityCounter(Counter):
     pass
