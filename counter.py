@@ -10,7 +10,7 @@ class Counter(ABC):
     def __init__(self, filename: str, stopwords: str):
         self.filename = filename
         self.stopwords = set()
-        self._letter_counter = 0
+        self._letters_counter = dict()
         self._k = 0 # counter value
         self._letters = defaultdict(lambda: 0)
 
@@ -41,7 +41,7 @@ class Counter(ABC):
 
     def reset(self):
         # reset variables for each run of a test
-        self.letter_counter = 0
+        self.letters_counter.clear()
         self.k = 0
 
     @property # getter
@@ -60,12 +60,12 @@ class Counter(ABC):
         self._k = value
 
     @property # getter
-    def letter_counter(self):
-        return self._letter_counter
+    def letters_counter(self):
+        return self._letters_counter
 
-    @letter_counter.setter
-    def letter_counter(self, value):
-        self._letter_counter = value
+    #@letters_counter.setter
+    #def letters_counter(self, value):
+    #    self._letters_counter = value
 
     @abstractmethod
     def compute(self):
@@ -78,9 +78,7 @@ class ExactCounter(Counter):
     def compute(self):
         for letter in self.read_letters(): self.add_letter(letter)
 
-        print("unique letters: ", len(self.letters))
-
-        print("total of letters: ", sum(self.letters.values()))
+        print("\nTotal letters: ", sum(self.letters.values()))
 
 class DecreasingProbabilityCounter(Counter):
     def __init__(self, filename: str, stopwords: str):
@@ -89,15 +87,22 @@ class DecreasingProbabilityCounter(Counter):
     def compute(self):        
         base = math.sqrt(2)
 
+        probabilities = dict()
         for letter in self.read_letters():
-            probability = 1 / (base**self.k)
+            self.k = self.letters[letter] # k = # of occurences of each letter 
 
-            if rand.random() < probability:
-                self.k += 1
+            probabilities[letter] = 1 / (base**self.k)
 
+            # if counter (letters[letter]) has value k, 
+            # increment with probability 1 / (base**k)
+            if rand.random() < probabilities[letter]: 
                 self.add_letter(letter)
 
-        self.letter_counter = int((base**self.k - base + 1) / (base - 1))
+            # estimate the number of events (letters) from the counter value, k?
+            # compute (base**k – base + 1) / (base – 1) (slides)
+            self.letters_counter[letter] = int((base**self.k - base + 1) / (base - 1))
+
+        print("\nTotal letters: ", sum(self.letters_counter.values()))
 
 class FrequentCounter(Counter):
     pass

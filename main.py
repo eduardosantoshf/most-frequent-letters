@@ -53,6 +53,8 @@ if args['counter-type'] == 'exact':
             args['stopwords'].name
         )
         counter.count()
+        print("\nTotal letters: ", sorted(counter.letters.items(), key=lambda item: item[1], reverse = True))
+
     
 if args['counter-type'] == 'decreasing':
     print(f"Running Decreasing Probability Counter...")
@@ -63,6 +65,5 @@ if args['counter-type'] == 'decreasing':
     )
 
     counter.count()
-    print(counter.k)
-    print("Total letters count: ", counter.letters)
-    print("Estimated letters count: ", counter.letter_counter)
+    print("\nTotal letters: ", sorted(counter.letters.items(), key=lambda item: item[1], reverse = True))
+    print("\nEstimated letters count: ", sorted(counter.letters_counter.items(), key=lambda item: item[1], reverse = True))
