@@ -64,4 +64,5 @@ if args['counter-type'] == 'decreasing':
 
     counter.count()
     print(counter.k)
-    print("Total letters count: ", counter.letter_counter)
+    print("Total letters count: ", counter.letters)
+    print("Estimated letters count: ", counter.letter_counter)
