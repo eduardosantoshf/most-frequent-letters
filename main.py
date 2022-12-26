@@ -52,5 +52,16 @@ if args['counter-type'] == 'exact':
             args['text'].name, 
             args['stopwords'].name
         )
+        counter.count()
+    
+if args['counter-type'] == 'decreasing':
+    print(f"Running Decreasing Probability Counter...")
 
-        print("Total letters count: ", counter.count())
+    counter = DecreasingProbabilityCounter(
+        args['text'].name, 
+        args['stopwords'].name
+    )
+
+    counter.count()
+    print(counter.k)
+    print("Total letters count: ", counter.letter_counter)
