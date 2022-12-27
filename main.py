@@ -43,6 +43,16 @@ if __name__ == '__main__':
         help = 'Run with a counter based on frequent-count'
     )
 
+    frequent_count_parser.add_argument(
+        '-k',
+        '--k',
+        metavar = 'K', 
+        default = 10, 
+        type = int, 
+        required = True,
+        help = 'Load stop-words from text file'
+    )
+
 args = vars(parser.parse_args())
 
 if args['counter-type'] == 'exact':
@@ -66,14 +76,17 @@ if args['counter-type'] == 'decreasing':
 
     counter.count()
     print("\nTotal letters: ", sorted(counter.letters.items(), key=lambda item: item[1], reverse = True))
-    print("\nEstimated letters count: ", sorted(counter.letters_counter.items(), key=lambda item: item[1], reverse = True))
+    #print("\nEstimated letters count: ", sorted(counter.letters_counter.items(), key=lambda item: item[1], reverse = True))
 
 if args['counter-type'] == 'frequent':
     print(f"Running Frequent Counter...")
 
+    print(args['k'])
+
     counter = FrequentCounter(
         args['text'].name, 
-        args['stopwords'].name
+        args['stopwords'].name,
+        args['k']
     )
 
     counter.count()

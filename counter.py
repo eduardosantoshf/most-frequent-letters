@@ -7,6 +7,8 @@ import math
 from headers_enum import Headers
 
 class Counter(ABC):
+    """Superclass representing Counter"""
+
     def __init__(self, filename: str, stopwords: str):
         self.filename = filename
         self.stopwords = set()
@@ -72,6 +74,8 @@ class Counter(ABC):
         pass
 
 class ExactCounter(Counter):
+    """Class representing Exact Counter"""
+
     def __init__(self, filename: str, stopwords: str):
         super().__init__(filename, stopwords)
     
@@ -81,6 +85,8 @@ class ExactCounter(Counter):
         print("\nTotal letters: ", sum(self.letters.values()))
 
 class DecreasingProbabilityCounter(Counter):
+    """Class representing Decreasing Probability Counter"""
+    
     def __init__(self, filename: str, stopwords: str):
         super().__init__(filename, stopwords)
     
@@ -102,18 +108,20 @@ class DecreasingProbabilityCounter(Counter):
             # compute (base**k – base + 1) / (base – 1) (slides)
             self.letters_counter[letter] = int((base**self.k - base + 1) / (base - 1))
 
-        print("\nTotal letters: ", sum(self.letters_counter.values()))
-
 class FrequentCounter(Counter):
-    def __init__(self, filename: str, stopwords: str):
+    """Class representing Frequent-Counter"""
+
+    def __init__(self, filename: str, stopwords: str, k: int):
         super().__init__(filename, stopwords)
         self.counters = defaultdict(lambda: 0)
+        self.k_parameter = k
     
-    # Misra & Gries algorithm
     def compute(self): 
-        k = 10
+        k = self.k_parameter
 
         letters = list()
+
+        # Misra & Gries algorithm
         for letter in self.read_letters():
             if letter not in letters: letters.append(letter)
 
@@ -135,5 +143,5 @@ class FrequentCounter(Counter):
         # frequency_estimate[letter] = counters[letter]
         # else frequency_estimate[letter] = 0
         counts = [self.counters[letter] if self.counters[letter] else 0 for letter in letters]
-        
+
         self.letters = {letter: count for letter, count in zip(letters, counts)}
