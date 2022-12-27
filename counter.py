@@ -103,6 +103,7 @@ class DecreasingProbabilityCounter(Counter):
 class FrequentCounter(Counter):
     def __init__(self, filename: str, stopwords: str):
         super().__init__(filename, stopwords)
+        self.counters = defaultdict(lambda: 0)
     
     global subtract_from_all
     
@@ -110,21 +111,32 @@ class FrequentCounter(Counter):
     def compute(self): 
         k = 10
 
+        letters = list()
         for letter in self.read_letters():
-            if letter in self.letters.keys():
-                self.add_letter(letter)
+            if letter not in letters: letters.append(letter)
+
+            if letter in self.counters.keys(): 
+                self.counters[letter] += 1
             
             else:
                 # keeps, at most, (k – 1) candidates at the same time
                 # candidate: item that occurs more than a 1/k fraction of 
                 # the time in the input
-                self.add_letter(letter) \
-                    if (len(self.letters.keys()) < (k - 1)) \
-                    else subtract_from_all(self)
-                    
+                if (len(self.counters.keys()) < (k - 1)):
+                    self.counters[letter] += 1
+                else: 
+                    subtract_from_all(self)
+
+        # if letter in counters[letter] then 
+        # frequency_estimate[letter] = counters[letter]
+        # else frequency_estimate[letter] = 0
+        for letter in letters:
+                self.letters[letter] = self.counters[letter] \
+                                        if self.counters[letter] \
+                                        else 0
 
     def subtract_from_all(self):
-        for letter, count in list(self.letters.items()):
-            self.letters[letter] -= 1
+        for letter, count in list(self.counters.items()):
+            self.counters[letter] -= 1
             
-            if count == 0: del self.letters[letter]
+            if count == 0: del self.counters[letter]
