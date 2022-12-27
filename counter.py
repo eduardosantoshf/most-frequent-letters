@@ -63,10 +63,6 @@ class Counter(ABC):
     def letters_counter(self):
         return self._letters_counter
 
-    #@letters_counter.setter
-    #def letters_counter(self, value):
-    #    self._letters_counter = value
-
     @abstractmethod
     def compute(self):
         pass
@@ -105,4 +101,30 @@ class DecreasingProbabilityCounter(Counter):
         print("\nTotal letters: ", sum(self.letters_counter.values()))
 
 class FrequentCounter(Counter):
-    pass
+    def __init__(self, filename: str, stopwords: str):
+        super().__init__(filename, stopwords)
+    
+    global subtract_from_all
+    
+    # Misra & Gries algorithm
+    def compute(self): 
+        k = 10
+
+        for letter in self.read_letters():
+            if letter in self.letters.keys():
+                self.add_letter(letter)
+            
+            else:
+                # keeps, at most, (k – 1) candidates at the same time
+                # candidate: item that occurs more than a 1/k fraction of 
+                # the time in the input
+                self.add_letter(letter) \
+                    if (len(self.letters.keys()) < (k - 1)) \
+                    else subtract_from_all(self)
+                    
+
+    def subtract_from_all(self):
+        for letter, count in list(self.letters.items()):
+            self.letters[letter] -= 1
+            
+            if count == 0: del self.letters[letter]

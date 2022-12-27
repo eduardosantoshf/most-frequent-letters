@@ -67,3 +67,14 @@ if args['counter-type'] == 'decreasing':
     counter.count()
     print("\nTotal letters: ", sorted(counter.letters.items(), key=lambda item: item[1], reverse = True))
     print("\nEstimated letters count: ", sorted(counter.letters_counter.items(), key=lambda item: item[1], reverse = True))
+
+if args['counter-type'] == 'frequent':
+    print(f"Running Frequent Counter...")
+
+    counter = FrequentCounter(
+        args['text'].name, 
+        args['stopwords'].name
+    )
+
+    counter.count()
+    print("\nTotal letters: ", sorted(counter.letters.items(), key=lambda item: item[1], reverse = True))
