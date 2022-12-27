@@ -50,6 +50,10 @@ class Counter(ABC):
 
     def add_letter(self, letter):
         self.letters[letter] += 1
+
+    @letters.setter
+    def letters(self, letters):
+        self._letters = letters
     
     @property # getter
     def k(self):
@@ -105,8 +109,6 @@ class FrequentCounter(Counter):
         super().__init__(filename, stopwords)
         self.counters = defaultdict(lambda: 0)
     
-    global subtract_from_all
-    
     # Misra & Gries algorithm
     def compute(self): 
         k = 10
@@ -115,28 +117,23 @@ class FrequentCounter(Counter):
         for letter in self.read_letters():
             if letter not in letters: letters.append(letter)
 
-            if letter in self.counters.keys(): 
+            # case 1: item already has counter or there are empty counters
+            # keeps, at most, (k – 1) candidates at the same time
+            # candidate: item that occurs more than a 1/k fraction of 
+            # the time in the input
+            if letter in self.counters.keys() or (len(self.counters.keys()) < (k - 1)): 
                 self.counters[letter] += 1
             
+            ## case 2: item doesn't have counter and there are no empty counters
             else:
-                # keeps, at most, (k – 1) candidates at the same time
-                # candidate: item that occurs more than a 1/k fraction of 
-                # the time in the input
-                if (len(self.counters.keys()) < (k - 1)):
-                    self.counters[letter] += 1
-                else: 
-                    subtract_from_all(self)
+                for letter, count in list(self.counters.items()):
+                    self.counters[letter] -= 1
+                    
+                    if count == 0: del self.counters[letter]
 
         # if letter in counters[letter] then 
         # frequency_estimate[letter] = counters[letter]
         # else frequency_estimate[letter] = 0
-        for letter in letters:
-                self.letters[letter] = self.counters[letter] \
-                                        if self.counters[letter] \
-                                        else 0
-
-    def subtract_from_all(self):
-        for letter, count in list(self.counters.items()):
-            self.counters[letter] -= 1
-            
-            if count == 0: del self.counters[letter]
+        counts = [self.counters[letter] if self.counters[letter] else 0 for letter in letters]
+        
+        self.letters = {letter: count for letter, count in zip(letters, counts)}
