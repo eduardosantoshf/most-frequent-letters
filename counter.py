@@ -5,6 +5,7 @@ import regex
 import math
 
 from headers_enum import Headers
+from footers_enum import Footers
 
 class Counter(ABC):
     """Superclass representing Counter"""
@@ -30,6 +31,9 @@ class Counter(ABC):
                 
             while line:
                 line = file.readline()
+
+                # ignore the Project Gutenberg's file footers
+                if line.strip() in [footer.value for footer in Footers]: break
 
                 for words in line.split():
                     # remove all stop-words and punctuation marks
@@ -109,7 +113,7 @@ class DecreasingProbabilityCounter(Counter):
             self.letters_counter[letter] = int((base**self.k - base + 1) / (base - 1))
 
 class FrequentCounter(Counter):
-    """Class representing Frequent-Counter"""
+    """Class representing Frequent Counter"""
 
     def __init__(self, filename: str, stopwords: str, k: int):
         super().__init__(filename, stopwords)
