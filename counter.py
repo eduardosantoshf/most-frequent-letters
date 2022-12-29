@@ -52,8 +52,9 @@ class Counter(ABC):
 
     def reset(self):
         # reset variables for each run of a test
-        self.letters_counter.clear()
+        self._letters_counter.clear()
         self.k = 0
+        self.letters = defaultdict(lambda: 0)
 
     @property # getter
     def letters(self):
@@ -113,7 +114,7 @@ class DecreasingProbabilityCounter(Counter):
             if rand.random() < probabilities[letter]: 
                 self.add_letter(letter)
 
-            # estimate the number of events (letters) from the counter value, k?
+            # estimate the number of events (letters) from the counter value, k
             # compute (base**k – base + 1) / (base – 1) (slides)
             self.letters_counter[letter] = int((base**self.k - base + 1) / (base - 1))
 
