@@ -4,7 +4,7 @@ import numpy as np
 from counter import *
 
 def decreasing_vs_exact():
-    tests_number = 5
+    tests_number = 100
     initial_time = time.time()
 
     exact_counter = ExactCounter(
@@ -33,27 +33,31 @@ def decreasing_vs_exact():
             stats[letter].append(letters_val[letter])
             expected_vals[letter].append(letters_expected_val[letter])
 
-    
-
-    print(f"\n{'Letter':^5s} {'Value':^10s} {'Exact Value':^10s} {'Expected Value':^20s} {'MeanAbsError':^15s} {'MinAbsError':^15} {'MaxAbsError':^15}") 
+    # one line because if split onto multiple lines there is a bug when printing
+    print(f"\n{'Letter':^5s} {'Value':^10s} {'Exact Value':<15s} {'Expected Value':<10s} {'MeanAE':>15s} {'MinAE':>15s} {'MaxAE':>15s} {'MeanRE':>16s} {'MinRE':>16s} {'MaxRE':>11s} {'StandDev':>15s} {'Variance':>15s}") 
 
     for letter in stats.keys():
         exact_value = exact_counter.letters[letter]
 
         l = np.array(expected_vals[letter])
 
-        mean_absolute_error = np.mean(np.abs(exact_value - l))
-        min_absolute_error = np.amin(np.abs(exact_value - l))
-        max_absolute_error = np.amax(np.abs(exact_value - l))
-
         letter_val = np.mean(stats[letter])
 
         letter_expected_val = np.mean(expected_vals[letter])
 
-        print(f"{letter:^5} {letter_val:^10.0f} {exact_value:^10.0f} {letter_expected_val:^20.0f} {mean_absolute_error:^15.1f} {min_absolute_error:^15.1f} {max_absolute_error:^15.1f}")
+        mean_absolute_error = np.mean(np.abs(exact_value - l))
+        min_absolute_error = np.amin(np.abs(exact_value - l))
+        max_absolute_error = np.amax(np.abs(exact_value - l))
 
-        #break
-        #print("\n", l)
+        mean_relative_error = (mean_absolute_error / exact_value) * 100
+        min_relative_error = (min_absolute_error / exact_value) * 100
+        max_relative_error = (max_absolute_error / exact_value) * 100
+
+        standard_deviation = np.std(expected_vals[letter])
+        variance = np.var(expected_vals[letter])
+
+        # one line because if split onto multiple lines there is a bug when printing
+        print(f"{letter:^5s} {letter_val:^10.0f} {exact_value:^10.0f} {letter_expected_val:>15.0f} {mean_absolute_error:>20.1f} {min_absolute_error:>15.1f} {max_absolute_error:>15.1f} {mean_relative_error:>15.1f}% {min_relative_error:>15.1f}% {max_relative_error:>10.1f}% {standard_deviation:>15.3E} {variance:>15.3E}")
         
     final_time = time.time()
 

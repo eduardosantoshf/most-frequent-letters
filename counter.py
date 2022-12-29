@@ -52,7 +52,7 @@ class Counter(ABC):
 
     def reset(self):
         # reset variables for each run of a test
-        self._letters_counter.clear()
+        self.letters_counter.clear()
         self.k = 0
         self.letters = defaultdict(lambda: 0)
 
