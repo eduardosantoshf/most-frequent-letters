@@ -29,17 +29,13 @@ def decreasing_vs_exact():
         letters_val = decreasing_counter.letters
         letters_expected_val = decreasing_counter.letters_counter
 
-        #print("\nTotal letters: ", letters_val)
-
         for letter in letters_val.keys():
             stats[letter].append(letters_val[letter])
             expected_vals[letter].append(letters_expected_val[letter])
-        
-    
-    print("\nstats: ", stats)
-    print("\nexpected_vals: ", expected_vals)
 
-    final_time = time.time()
+    
+
+    print(f"\n{'Letter':^5s} {'Value':^10s} {'Exact Value':^10s} {'Expected Value':^20s} {'MeanAbsError':^15s} {'MinAbsError':^15} {'MaxAbsError':^15}") 
 
     for letter in stats.keys():
         exact_value = exact_counter.letters[letter]
@@ -50,13 +46,16 @@ def decreasing_vs_exact():
         min_absolute_error = np.amin(np.abs(exact_value - l))
         max_absolute_error = np.amax(np.abs(exact_value - l))
 
-        print(mean_absolute_error)
-        print(min_absolute_error)
-        print(max_absolute_error)
+        letter_val = np.mean(stats[letter])
 
+        letter_expected_val = np.mean(expected_vals[letter])
 
+        print(f"{letter:^5} {letter_val:^10.0f} {exact_value:^10.0f} {letter_expected_val:^20.0f} {mean_absolute_error:^15.1f} {min_absolute_error:^15.1f} {max_absolute_error:^15.1f}")
+
+        #break
         #print("\n", l)
         
+    final_time = time.time()
 
     print(final_time - initial_time)
 
