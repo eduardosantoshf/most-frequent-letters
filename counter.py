@@ -10,16 +10,21 @@ from footers_enum import Footers
 class Counter(ABC):
     """Superclass representing Counter"""
 
+    global read_letters
+
     def __init__(self, filename: str, stopwords: str):
         self.filename = filename
         self.stopwords = set()
-        self._letters_counter = dict()
+        self.parsed_letters = list() # all parsed letters from text file
+        self._letters_counter = dict() # expected count for each letter
         self._k = 0 # counter value
-        self._letters = defaultdict(lambda: 0)
+        self._letters = defaultdict(lambda: 0) # {letter: count}
 
         with open(stopwords, 'r') as file:
             for word in file:
                 self.stopwords.add(word.strip())
+        
+        read_letters(self)
 
     def read_letters(self):
         with open(self.filename, 'r') as file:
@@ -39,7 +44,7 @@ class Counter(ABC):
                     # remove all stop-words and punctuation marks
                     for word in regex.findall('\p{alpha}+', words):
                         for letter in word:
-                            yield letter.upper()
+                            self.parsed_letters.append(letter.upper())
     
     def count(self):
         self.reset()
@@ -84,7 +89,7 @@ class ExactCounter(Counter):
         super().__init__(filename, stopwords)
     
     def compute(self):
-        for letter in self.read_letters(): self.add_letter(letter)
+        for letter in self.parsed_letters: self.add_letter(letter)
 
         print("\nTotal letters: ", sum(self.letters.values()))
 
@@ -98,7 +103,7 @@ class DecreasingProbabilityCounter(Counter):
         base = math.sqrt(2)
 
         probabilities = dict()
-        for letter in self.read_letters():
+        for letter in self.parsed_letters:
             self.k = self.letters[letter] # k = # of occurences of each letter 
 
             probabilities[letter] = 1 / (base**self.k)
@@ -126,7 +131,7 @@ class FrequentCounter(Counter):
         letters = list()
 
         # Misra & Gries algorithm
-        for letter in self.read_letters():
+        for letter in self.parsed_letters:
             if letter not in letters: letters.append(letter)
 
             # case 1: item already has counter or there are empty counters
