@@ -36,9 +36,12 @@ def decreasing_vs_exact():
     # one line because if split onto multiple lines there is a bug when printing
     print(f"\n{'Letter':^5s} {'Value':^10s} {'Exact Value':<15s} {'Expected Value':<10s} {'MeanAE':>15s} {'MinAE':>15s} {'MaxAE':>15s} {'MeanRE':>16s} {'MinRE':>16s} {'MaxRE':>11s} {'StandDev':>15s} {'Variance':>15s}") 
 
-    for letter in stats.keys():
-        exact_value = exact_counter.letters[letter]
+    # order letters by value
+    exact_counter.letters = dict(sorted(exact_counter.letters.items(), key=lambda x: x[1], reverse=True))
 
+    for letter in exact_counter.letters.keys():
+        exact_value = exact_counter.letters[letter]
+        
         l = np.array(expected_vals[letter])
 
         letter_val = np.mean(stats[letter])

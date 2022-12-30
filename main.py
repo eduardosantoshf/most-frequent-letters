@@ -75,27 +75,18 @@ if args['counter-type'] == 'decreasing':
     )
 
     counter.count()
-    print("\nTotal letters: ", sorted(counter.letters.items(), key=lambda item: item[1], reverse = True))
-    print("\nExpected letters count: ", sorted(counter.letters_counter.items(), key=lambda item: item[1], reverse = True))
+    print("\nTop 10 most frequent letters: ", sorted(counter.letters.items(), key=lambda item: item[1], reverse = True)[:10])
 
 if args['counter-type'] == 'frequent':
     print(f"Running Frequent Counter...")
 
-    print(args['k'])
+    k = args['k']
 
     counter = FrequentCounter(
         args['text'].name, 
         args['stopwords'].name,
-        args['k']
+        k
     )
 
     counter.count()
-    print("\nTotal letters: ", sorted(counter.letters.items(), key=lambda item: item[1], reverse = True))
-
-# Compute:
-
-# Average
-# Mean, Maximum and Minimum Absolute Error
-# Mean, Maximum and Minimum Relative Error
-# Standard Deviation
-# Variance
+    print("\nTop " + str(k) + " most frequent letters: ", sorted(counter.letters.items(), key=lambda item: item[1], reverse = True)[:k])
