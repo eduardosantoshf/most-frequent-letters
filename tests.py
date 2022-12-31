@@ -14,20 +14,20 @@ def decreasing_vs_exact():
 
     exact_counter.count()
 
-    decreasing_counter = DecreasingProbabilityCounter(
+    frequent_counter = DecreasingProbabilityCounter(
         "texts/TheMetamorphosis/en.txt", 
         "stopwords/en.txt"
     )
 
-    decreasing_counter.count()
+    frequent_counter.count()
 
-    stats = {letter: [] for letter in decreasing_counter.letters.keys()}
-    expected_vals = {letter: [] for letter in decreasing_counter.letters.keys()}
+    stats = {letter: [] for letter in frequent_counter.letters.keys()}
+    expected_vals = {letter: [] for letter in frequent_counter.letters.keys()}
     
     for _ in range(0, tests_number):
-        decreasing_counter.count()
-        letters_val = decreasing_counter.letters
-        letters_expected_val = decreasing_counter.letters_counter
+        frequent_counter.count()
+        letters_val = frequent_counter.letters
+        letters_expected_val = frequent_counter.letters_counter
 
         for letter in letters_val.keys():
             stats[letter].append(letters_val[letter])
@@ -67,7 +67,37 @@ def decreasing_vs_exact():
     print(final_time - initial_time)
 
 def frequent_vs_exact():
-    pass
+    initial_time = time.time()
+
+    exact_counter = ExactCounter(
+        "texts/TheMetamorphosis/en.txt", 
+        "stopwords/en.txt"
+    )
+
+    exact_counter.count()
+    exact_count = exact_counter.letters
+
+    print("\n")
+    print(sorted(exact_count.items(), key=lambda item: item[1], reverse = True))
+
+    for k in [3, 5, 10, 20]:
+
+        frequent_counter = FrequentCounter(
+            "texts/TheMetamorphosis/en.txt", 
+            "stopwords/en.txt",
+            k
+        )
+
+        frequent_counter.count()
+        letters_count = frequent_counter.letters
+
+        print("\n")
+        print(sorted(letters_count.items(), key=lambda item: item[1], reverse = True)[:k])
+
+    final_time = time.time()
+
+    print(final_time - initial_time)
 
 if __name__ == "__main__":
-    decreasing_vs_exact()
+    #decreasing_vs_exact()
+    frequent_vs_exact()
