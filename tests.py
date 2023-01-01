@@ -66,7 +66,7 @@ def decreasing_vs_exact():
 
     print(final_time - initial_time)
 
-def frequent_vs_exact():
+def frequent_vs_exact(k: int):
     initial_time = time.time()
 
     exact_counter = ExactCounter(
@@ -77,27 +77,24 @@ def frequent_vs_exact():
     exact_counter.count()
     exact_count = exact_counter.letters
 
-    print("\n")
-    print(sorted(exact_count.items(), key=lambda item: item[1], reverse = True))
+    frequent_counter = FrequentCounter(
+        "texts/TheMetamorphosis/en.txt", 
+        "stopwords/en.txt",
+        k
+    )
 
-    for k in [3, 5, 10, 20]:
+    frequent_counter.count()
+    letters_count = dict(sorted(frequent_counter.letters.items(), key=lambda x: x[1], reverse=True))
 
-        frequent_counter = FrequentCounter(
-            "texts/TheMetamorphosis/en.txt", 
-            "stopwords/en.txt",
-            k
-        )
+    print(f"\n{'Letter':^5s} {'Value':^10s} {'Exact Value':<15s}") 
 
-        frequent_counter.count()
-        letters_count = frequent_counter.letters
-
-        print("\n")
-        print(sorted(letters_count.items(), key=lambda item: item[1], reverse = True)[:k])
+    for letter in letters_count.keys():
+        print(f"{letter:^5s} {letters_count[letter]:^10.0f} {exact_count[letter]:^10.0f}")
 
     final_time = time.time()
 
-    print(final_time - initial_time)
+    print("\nExecution time: ", final_time - initial_time)
 
 if __name__ == "__main__":
     #decreasing_vs_exact()
-    frequent_vs_exact()
+    frequent_vs_exact(10)
