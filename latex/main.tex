@@ -5,6 +5,9 @@
 \usepackage{graphicx}
 \usepackage{float}
 
+% listings to highlight code
+\usepackage{pythonhighlight}
+
 %
 % Valid options are:
 %
@@ -59,9 +62,66 @@ The frequent problem happens when, given a sequence of items, we want to identif
 
 \section{Problem Description}
 
+The  goal of this assignment was to identify the most frequent letters in text files using different methods and to evaluate the quality of estimates regarding the exact counts.
+
+In order to accomplish that, three different approaches were developed and tested:
+\begin{itemize}
+    \item exact counter
+    \item approximate counter - decreasing probability counter with probability \(\frac{1}{\sqrt{2}^k}\)
+    \item frequent counter - Misra \& Gries algorithm to identify frequent items in data streams
+\end{itemize} 
+
+The testing involved an analysis of the computational efficiency and limitations of the developed approaches was carried out, in terms of absolute and relative errors, computing the mean, minimum, and maximum of each error, as well as computing the standard deviation and variance.
+Finally, for each method, the most frequent letters were identified, checking if they were in the same relative order.
 
 \section{Implementation Description}
 
+Running the \textbf{main.py}, with the \textbf{--help} flag, a few running options are presented.
+
+\begin{figure}[!htb]
+    \centering
+    \includegraphics[width=1\columnwidth]{./figures/usage}
+    \caption{Help Menu of the Main Program}
+    \label{fig: Help Menu}
+\end{figure}
+
+The \textbf{-t} flag represents the filename of the literary work to be read and processed by the program, which can be found inside the \textbf{/texts/} directory. The \textbf{-s} flag represents the filename of the stopwords to be ignored when processing the text file. The stopwords files can be found inside the \textbf{/stopwords/} directory. After the previous parameters, we have to specify the counter type to be computed, using one of the following:
+\begin{itemize}
+    \item \textbf{exact} - count using the exact counter
+    \item \textbf{decreasing} - count using the decreasing probability counter (with probability \(\frac{1}{\sqrt{2}^k}\))
+    \item \textbf{frequent} - count using the frequent counter (we must also specify the \textit{k} parameter, using the flag \textbf{-k})
+\end{itemize}
+
+The \textbf{counter.py} contains the main logic of the solution, using the \textbf{ABC}\cite{abstract_base_classes} (Abstract Base Classes) Python module, the \textbf{ExactCounter}, \textbf{DecreasingProbabilityCounter}, and \textbf{FrequentCounter} classes extend the \textbf{Counter} parent class, using an OOP (object-oriented programming) model.
+The \textbf{Counter} class contains the following methods:
+\begin{itemize}
+    \item \textit{read\_letters(self)}
+\end{itemize}
+
+\begin{python}
+def read_letters(self):
+        with open(self.filename, 'r') as file:
+            while True:
+                line = file.readline()
+
+                # ignore the Project Gutenberg's file headers
+                if line.strip() in [header.value for header in Headers]: break
+                
+            while line:
+                line = file.readline()
+
+                # ignore the Project Gutenberg's file footers
+                if line.strip() in [footer.value for footer in Footers]: break
+
+                for words in line.split():
+                    # remove all stop-words and punctuation marks
+                    for word in regex.findall('\p{alpha}+', words):
+                        for letter in word:
+                            self.parsed_letters.append(letter.upper())
+\end{python}
+
+
+Inside the 
 
 \section{Results and Discussion}
 
