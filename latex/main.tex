@@ -5,8 +5,42 @@
 \usepackage{graphicx}
 \usepackage{float}
 
+%%%%%%%% Python code snippet %%%%%%%%
+
+% Custom colors
+\usepackage{color}
+\definecolor{deepblue}{rgb}{0,0,0.5}
+\definecolor{deepred}{rgb}{0.6,0,0}
+\definecolor{deepgreen}{rgb}{0,0.5,0}
+
+\usepackage{listings}
+
+% Python style for highlighting
+\newcommand\pythonstyle{\lstset{
+language=Python,
+basicstyle=\ttm\footnotesize, %added \footnotesize to /basicstyle to make the correcy code siz
+morekeywords={self},              % Add keywords here
+keywordstyle=\ttb\color{deepblue},
+emph={MyClass,__init__},          % Custom highlighting
+emphstyle=\ttb\color{deepred},    % Custom highlighting style
+stringstyle=\color{deepgreen},
+%frame=tb,                         % Any extra options here
+showstringspaces=false
+}}
+
+
+% Python environment
+\lstnewenvironment{python}[1][]
+{
+\pythonstyle
+\lstset{#1}
+}
+{}
+
 % listings to highlight code
 \usepackage{pythonhighlight}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %
 % Valid options are:
@@ -85,7 +119,7 @@ Running the \textbf{main.py}, with the \textbf{--help} flag, a few running optio
     \label{fig: Help Menu}
 \end{figure}
 
-The \textbf{-t} flag represents the filename of the literary work to be read and processed by the program, which can be found inside the \textbf{/texts/} directory. The \textbf{-s} flag represents the filename of the stopwords to be ignored when processing the text file. The stopwords files can be found inside the \textbf{/stopwords/} directory. After the previous parameters, we have to specify the counter type to be computed, using one of the following:
+The \textbf{-t} flag represents the filename of the literary work to be read and processed by the program, which can be found inside the \textbf{/texts/} directory. The \textbf{-s} flag represents the filename of the stop-words to be ignored when processing the text file. The stop-words files can be found inside the \textbf{/stop-words/} directory. After the previous parameters, we have to specify the counter type to be computed, using one of the following:
 \begin{itemize}
     \item \textbf{exact} - count using the exact counter
     \item \textbf{decreasing} - count using the decreasing probability counter (with probability \(\frac{1}{\sqrt{2}^k}\))
@@ -93,35 +127,54 @@ The \textbf{-t} flag represents the filename of the literary work to be read and
 \end{itemize}
 
 The \textbf{counter.py} contains the main logic of the solution, using the \textbf{ABC}\cite{abstract_base_classes} (Abstract Base Classes) Python module, the \textbf{ExactCounter}, \textbf{DecreasingProbabilityCounter}, and \textbf{FrequentCounter} classes extend the \textbf{Counter} parent class, using an OOP (object-oriented programming) model.
-The \textbf{Counter} class contains the following methods:
-\begin{itemize}
-    \item \textit{read\_letters(self)}
-\end{itemize}
+Inside the \textbf{Counter} class there is the \textit{read\_letters()} method, which is responsible for parsing the text file, removing the Project Gutenberg file headers and footers, all stop-words and punctuation marks, as well as converting all letters to uppercase.
 
-\begin{python}
+\begin{python}[linenos, tabsize=1, breaklines]
 def read_letters(self):
-        with open(self.filename, 'r') as file:
-            while True:
-                line = file.readline()
+    with open(self.filename, 'r') as file:
+        while True:
+            line = file.readline()
 
-                # ignore the Project Gutenberg's file headers
+            # ignore the Project Gutenberg's file headers
                 if line.strip() in [header.value for header in Headers]: break
                 
-            while line:
-                line = file.readline()
+        while line:
+            line = file.readline()
 
-                # ignore the Project Gutenberg's file footers
-                if line.strip() in [footer.value for footer in Footers]: break
-
-                for words in line.split():
-                    # remove all stop-words and punctuation marks
-                    for word in regex.findall('\p{alpha}+', words):
-                        for letter in word:
-                            self.parsed_letters.append(letter.upper())
+            # ignore the Project Gutenberg's file footers
+            if line.strip() in [footer.value for footer in Footers]: break
+            
+            for words in line.split():
+                # remove all stop-words and punctuation marks
+                for word in regex.findall('\p{alpha}+', words):
+                    for letter in word:
+                        self.parsed_letters.append(letter.upper())
 \end{python}
 
+\subsection{Exact Counter}
 
-Inside the 
+Inside the \textbf{ExactCounter} class we can find the \textit{compute()} method, which is responsible for counting the exact number of occurrences of each letter from the literary work.
+
+\subsection{Decreasing Probability Counter}
+
+The \textbf{DecreasingProbabilityCounter} class implements the Decreasing Probability Counter as a probabilistic counter, with the increment being made with probability \(\frac{1}{\sqrt{2}^k}\), where \textit{k} represents the number of occurrences of each letter. If the counter has value \textit{k}, the algorithm increases the number of occurrences of the letter with the previously mentioned probability. Due to \textit{k} and the probability being inversely proportional, as \textit{k} increases, the probability of incrementing the counter will be much smaller. This method allows the counting of a large number of events using a small amount of memory.
+The estimated value of the counter
+for each letter can be calculated using the following formula:
+
+\[
+\frac{\sqrt{2}^k - \sqrt{2} + 1}{\sqrt{2} - 1}
+\]
+
+\subsection{Frequent Counter}
+
+The \textbf{FrequentCount} class implements a Frequent Counter as a Data Stream Algorithm. The goal is to establish an estimate for the frequency of any stream letter. The frequent count algorithm implemented was the Misra & Gries algorithm. This uses a parameter \textit{k} that controls the quality of the results given. It uses a \textit{{letter: counter}} dictionary, with at most \textit{(k - 1)} counters, at any time.
+This algorithm provides, for any letter, \textit{l}, a frequency estimate \textit{f_{l}^*} satisfying
+
+\[
+f_l - \frac{m}{k} \leq f_{l}^* \leq f_l
+\]
+
+were \textit{m} is the length of the data stream or, in this case, the total number of letters in the text. If some letter has \(f_l > \frac{m}{k}\), its counter \textit{A[l]} will be positive, i.e., no item with frequency \(\frac{m}{k}\) is missed.
 
 \section{Results and Discussion}
 
