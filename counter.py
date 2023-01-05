@@ -105,7 +105,7 @@ class DecreasingProbabilityCounter(Counter):
 
         probabilities = dict()
         for letter in self.parsed_letters:
-            self.k = self.letters[letter] # k = # of occurences of each letter 
+            self.k = self.letters[letter] # k = # of occurrences of each letter 
 
             probabilities[letter] = 1 / (base**self.k)
 

@@ -84,6 +84,10 @@ def frequent_vs_exact(k: int):
     )
 
     frequent_counter.count()
+    print(frequent_counter.letters)
+    sorted_exact_count = sorted(exact_counter.letters.items(), key=lambda x: x[1], reverse=True)
+    print(sorted_exact_count)
+
     letters_count = dict(sorted(frequent_counter.letters.items(), key=lambda x: x[1], reverse=True))
 
     print(f"\n{'Letter':^5s} {'Value':^10s} {'Exact Value':<15s}") 
