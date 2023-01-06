@@ -64,7 +64,9 @@ def decreasing_vs_exact():
         
     final_time = time.time()
 
-    print(final_time - initial_time)
+    execution_time = final_time - initial_time
+
+    print("\nExecution time (for " + str(tests_number) + " trials): " + str(round(execution_time, 2)) + "s")
 
 def frequent_vs_exact(k: int):
     initial_time = time.time()
@@ -84,9 +86,7 @@ def frequent_vs_exact(k: int):
     )
 
     frequent_counter.count()
-    print(frequent_counter.letters)
     sorted_exact_count = sorted(exact_counter.letters.items(), key=lambda x: x[1], reverse=True)
-    print(sorted_exact_count)
 
     letters_count = dict(sorted(frequent_counter.letters.items(), key=lambda x: x[1], reverse=True))
 
@@ -97,8 +97,10 @@ def frequent_vs_exact(k: int):
 
     final_time = time.time()
 
-    print("\nExecution time: ", final_time - initial_time)
+    execution_time = final_time - initial_time
+
+    print("\nExecution time: " + str(round(execution_time, 2)) + "s")
 
 if __name__ == "__main__":
-    #decreasing_vs_exact()
-    frequent_vs_exact(10)
+    decreasing_vs_exact()
+    #frequent_vs_exact(20)
