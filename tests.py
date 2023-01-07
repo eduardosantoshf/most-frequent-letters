@@ -8,14 +8,14 @@ def decreasing_vs_exact():
     initial_time = time.time()
 
     exact_counter = ExactCounter(
-        "texts/TheMetamorphosis/en.txt", 
+        "texts/CrimeAndPunishment/en.txt", 
         "stopwords/en.txt"
     )
 
     exact_counter.count()
 
     frequent_counter = DecreasingProbabilityCounter(
-        "texts/TheMetamorphosis/en.txt", 
+        "texts/CrimeAndPunishment/en.txt", 
         "stopwords/en.txt"
     )
 
@@ -72,7 +72,7 @@ def frequent_vs_exact(k: int):
     initial_time = time.time()
 
     exact_counter = ExactCounter(
-        "texts/TheMetamorphosis/en.txt", 
+        "texts/CrimeAndPunishment/en.txt", 
         "stopwords/en.txt"
     )
 
@@ -80,7 +80,7 @@ def frequent_vs_exact(k: int):
     exact_count = exact_counter.letters
 
     frequent_counter = FrequentCounter(
-        "texts/TheMetamorphosis/en.txt", 
+        "texts/CrimeAndPunishment/en.txt", 
         "stopwords/en.txt",
         k
     )

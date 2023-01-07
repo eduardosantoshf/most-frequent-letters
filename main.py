@@ -63,7 +63,7 @@ if args['counter-type'] == 'exact':
             args['stopwords'].name
         )
         counter.count()
-        print("\nTotal letters: ", sorted(counter.letters.items(), key=lambda item: item[1], reverse = True))
+        print("\nTotal letters: ", sorted(counter.letters.items(), key=lambda item: item[1], reverse = True)[:10])
 
     
 if args['counter-type'] == 'decreasing':
